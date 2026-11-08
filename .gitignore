@@ -3,3 +3,6 @@ dist/
 .astro/
 .DS_Store
 .env
+
+# Memoria de trabajo local del agente (logbook)
+.claude/logbooks/

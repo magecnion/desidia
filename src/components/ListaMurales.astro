@@ -10,7 +10,7 @@ interface Props {
 const { murales, artistas } = Astro.props;
 ---
 
-<ul class="lista" data-lista-murales>
+<ul class="grid list-none grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-x-6 gap-y-10 p-0" data-lista-murales>
   {
     murales.map((mural) => (
       <li data-slug={mural.slug}>
@@ -19,13 +19,3 @@ const { murales, artistas } = Astro.props;
     ))
   }
 </ul>
-
-<style>
-  .lista {
-    list-style: none;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-    gap: 1.5rem;
-  }
-</style>
