@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import ListaMurales from '../components/ListaMurales.astro';
+import MapaMurales from '../components/MapaMurales.astro';
+import { getArtistas, getMurales } from '../data/repositorio.ts';
+import { yearsDisponibles } from '../domain/murales.ts';
+import { ILUSTRACION, PROYECCION } from '../map/index.ts';
+import { datosMapa } from '../map/datos-cliente.ts';
+
+const [murales, artistas] = await Promise.all([getMurales(), getArtistas()]);
+const datos = datosMapa(murales, artistas, ILUSTRACION, PROYECCION);
+---
+
+<Base>
+  <h1>Murales de Argana Alta</h1>
+  <MapaMurales datos={datos} artistas={artistas} years={yearsDisponibles(murales)} />
+  <section aria-label="Listado de murales">
+    <h2>Listado</h2>
+    <ListaMurales murales={murales} artistas={artistas} />
+  </section>
+</Base>

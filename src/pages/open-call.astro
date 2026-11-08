@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+import { getPagina } from '../data/repositorio.ts';
+
+const { titulo, Content } = await getPagina('open-call');
+---
+
+<Base titulo={titulo}>
+  <h1>{titulo}</h1>
+  <Content />
+</Base>
