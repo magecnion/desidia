@@ -1,0 +1,46 @@
+---
+/**
+ * Panel con el detalle de un mural (adaptado de MuralPanel del prototipo).
+ * Lateral en escritorio y hoja inferior en móvil. El contenido lo rellena `scripts/panel-mural.ts`.
+ */
+import { clasesBoton } from './ui/boton.ts';
+---
+
+<div data-panel-fondo class="pointer-events-none fixed inset-0 z-[1000] bg-ink/30 opacity-0 transition-opacity duration-300" aria-hidden="true"></div>
+<aside
+  data-panel
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="panel-mural-titulo"
+  aria-hidden="true"
+  inert
+  class="fixed inset-x-0 bottom-0 z-[1001] max-h-[88vh] translate-y-full overflow-y-auto border-t-2 border-ink bg-card transition-transform duration-500 ease-out md:inset-y-0 md:right-0 md:left-auto md:max-h-none md:w-[460px] md:translate-x-full md:translate-y-0 md:border-t-0 md:border-l-2"
+>
+  <div class="flex flex-col">
+    <div class="mx-auto mt-2 h-1 w-12 bg-ink/30 md:hidden" aria-hidden="true"></div>
+    <div class="relative">
+      <img data-panel-imagen src="" alt="" width="1024" height="1280" class="aspect-[4/5] w-full object-cover md:aspect-[4/4.5]" />
+      <button
+        type="button"
+        data-panel-cerrar
+        aria-label="Cerrar"
+        class="absolute top-3 right-3 grid h-10 w-10 cursor-pointer place-items-center bg-paper text-ink"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+      </button>
+    </div>
+    <div class="space-y-4 p-6 md:p-8">
+      <p data-panel-meta class="font-hand text-xl text-terracotta"></p>
+      <h2 id="panel-mural-titulo" data-panel-titulo class="font-display text-5xl leading-none"></h2>
+      <div data-panel-descripcion class="prosa leading-relaxed text-muted-foreground"></div>
+      <p class="text-sm">
+        <span data-panel-direccion></span>
+        <a data-panel-maps href="" target="_blank" rel="noopener" class="ml-1 whitespace-nowrap text-terracotta underline-offset-4 hover:underline">Abrir en Google Maps ↗</a>
+      </p>
+      <a data-panel-enlace href="" class={clasesBoton('tinta', 'xl')}>
+        Ver mural
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg>
+      </a>
+    </div>
+  </div>
+</aside>

@@ -12,10 +12,10 @@ const datos = datosMapa(murales, artistas, ILUSTRACION, PROYECCION);
 ---
 
 <Base>
-  <h1>Murales de Argana Alta</h1>
+  <h1 class="mb-6 font-display text-5xl leading-none sm:text-6xl">Murales de Argana Alta</h1>
   <MapaMurales datos={datos} artistas={artistas} years={yearsDisponibles(murales)} />
-  <section aria-label="Listado de murales">
-    <h2>Listado</h2>
+  <section aria-label="Listado de murales" class="mt-16">
+    <h2 class="mb-6 font-display text-4xl">Listado</h2>
     <ListaMurales murales={murales} artistas={artistas} />
   </section>
 </Base>
