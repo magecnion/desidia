@@ -1,0 +1,10 @@
+{
+  "titulo": "Mural de ejemplo tres",
+  "year": 2024,
+  "artistas": ["marco-ruiz"],
+  "ubicacion": {
+    "direccion": "C. Iguazú (ejemplo), Argana Alta, Arrecife",
+    "coordenadas": "28.97640, -13.56030"
+  },
+  "fotos": [{ "imagen": "/media/murales/ejemplo.svg" }]
+}

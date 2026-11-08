@@ -1,0 +1,31 @@
+---
+import type { Artista, Mural } from '../domain/murales.ts';
+import TarjetaMural from './TarjetaMural.astro';
+
+interface Props {
+  murales: Mural[];
+  artistas: Artista[];
+}
+
+const { murales, artistas } = Astro.props;
+---
+
+<ul class="lista" data-lista-murales>
+  {
+    murales.map((mural) => (
+      <li data-slug={mural.slug}>
+        <TarjetaMural mural={mural} artistas={artistas} />
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .lista {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: 1.5rem;
+  }
+</style>
