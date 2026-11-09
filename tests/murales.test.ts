@@ -9,7 +9,7 @@ import {
   yearsDisponibles,
   type Mural,
 } from '../src/domain/murales.ts';
-import { MuralFicheroSchema } from '../src/domain/schema.ts';
+import { AjustesFicheroSchema, ArtistaFicheroSchema, MuralFicheroSchema } from '../src/domain/schema.ts';
 
 const enCanarias = ({ lat }: { lat: number }) => lat > 27 && lat < 30;
 
@@ -64,4 +64,11 @@ test('validarIntegridad detecta artistas inexistentes y puntos fuera del mapa', 
   assert.deepEqual(validarIntegridad([mural('a', 2024, ['x'])], artistas, enCanarias), []);
   const errores = validarIntegridad([mural('b', 2024, ['z'], 40.4, -3.7)], artistas, enCanarias);
   assert.equal(errores.length, 2);
+});
+
+test('los campos opcionales vacíos o null cuentan como ausentes', () => {
+  const artista = ArtistaFicheroSchema.parse({ nombre: 'X', bio: '', foto: null, instagram: '' });
+  assert.deepEqual(artista, { nombre: 'X', bio: undefined, foto: undefined, instagram: undefined });
+  assert.ok(!ArtistaFicheroSchema.safeParse({ nombre: 'X', instagram: '@arroba' }).success);
+  assert.deepEqual(AjustesFicheroSchema.parse({ email: '', redes: null }), { email: undefined, redes: [] });
 });

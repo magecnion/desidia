@@ -10,6 +10,7 @@ La validación está en `src/domain/schema.ts`; si un fichero no cumple el contr
   Es el identificador estable: las referencias entre colecciones usan slugs.
 - **Imágenes**: rutas absolutas desde `public/`, p. ej. `/media/murales/mi-mural-1.webp`.
 - **Markdown**: los campos marcados como markdown admiten formato básico (negrita, enlaces, párrafos).
+- **Campos opcionales**: omitirlos, dejarlos como `""` o como `null` es equivalente (sin valor).
 
 ## Mural — `content/murales/<slug>.json`
 

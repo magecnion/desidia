@@ -8,7 +8,7 @@ sin backend propio.
 
 | Tema | Decisión |
 |---|---|
-| Stack | Astro (estático) + Leaflet + Cloudflare Pages |
+| Stack | Astro (estático) + Leaflet + Tailwind + Cloudflare Workers (recomendado sobre Pages para proyectos nuevos) |
 | Edición de contenido | Sveltia CMS (basado en Git) como **adaptador intercambiable**; login con GitHub del cliente |
 | Idioma | Solo castellano |
 | Volumen | ~15 murales hoy, < 50 previstos |
@@ -99,6 +99,6 @@ Año (chips) + artista (selector), combinables, en cliente, sincronizados con la
 2. **Mapa** — ilustración provisional, proyección TPS, Leaflet, filtros + URL, herramienta de calibración. ✅
    ⚠️ La ilustración provisional es una captura de Google Maps: no publicar la web con ella.
 3. **Páginas** — fichas, índice, contacto (formulario + redes), open call, layout, responsive.
-4. **CMS** — `public/admin/config.yml`, Worker `sveltia-cms-auth`, validaciones.
+4. **CMS** — `public/admin/config.yml` (validado contra el esquema de Sveltia), `wrangler.jsonc`, 404, guía `docs/despliegue.md`. 🔄 pendiente: pasos con cuentas (Cloudflare, OAuth GitHub, acceso del cliente).
 5. **Ilustración definitiva** — teselas, puntos de control finales.
 6. **Contenido y entrega** — 15 murales, guía para el cliente, SEO, dominio.

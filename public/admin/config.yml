@@ -1,0 +1,175 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+#
+# Adaptador Sveltia CMS. Solo describe cómo se editan los ficheros de content/; el contrato de datos es
+# docs/modelo-de-datos.md (validado en src/domain/schema.ts). Si se cambia de CMS, se sustituye esta carpeta.
+
+backend:
+  name: github
+  repo: magecnion/desidia
+  branch: main
+  # URL del Worker sveltia-cms-auth (login con GitHub). Pendiente de desplegar: ver docs/despliegue.md
+  # base_url: https://sveltia-cms-auth.<subdominio>.workers.dev
+  commit_messages:
+    create: 'Contenido: crea {{collection}} «{{slug}}»'
+    update: 'Contenido: actualiza {{collection}} «{{slug}}»'
+    delete: 'Contenido: borra {{collection}} «{{slug}}»'
+    uploadMedia: 'Contenido: sube «{{path}}»'
+    deleteMedia: 'Contenido: borra «{{path}}»'
+
+site_url: https://desidia.example # TODO: dominio definitivo
+display_url: https://desidia.example
+
+media_folder: /public/media
+public_folder: /media
+media_libraries:
+  default:
+    config:
+      max_file_size: 20000000 # 20 MB antes de convertir
+      slugify_filename: true
+      transformations:
+        raster_image:
+          format: webp
+          quality: 82
+          width: 2400
+          height: 2400
+
+slug:
+  encoding: ascii
+  clean_accents: true
+  sanitize_replacement: '-'
+
+output:
+  # El modelo trata igual un campo vacío que uno ausente; así los ficheros quedan limpios.
+  omit_empty_optional_fields: true
+  json:
+    indent_size: 2
+
+collections:
+  - name: murales
+    label: Murales
+    label_singular: Mural
+    folder: content/murales
+    format: json
+    identifier_field: titulo
+    # El nombre del fichero es la URL del mural (/murales/<slug>/): se fija al crearlo.
+    slug:
+      template: '{{titulo}}'
+      editable: [create]
+    summary: '{{titulo}} · {{year}}'
+    sortable_fields: [titulo, year]
+    preview_path: murales/{{slug}}/
+    fields:
+      - { name: titulo, label: Título }
+      - name: year
+        label: Año
+        widget: number
+        value_type: int
+        min: 1900
+        max: 2100
+      - name: artistas
+        label: Artistas
+        widget: relation
+        collection: artistas
+        multiple: true
+        min: 1
+        display_fields: [nombre]
+        search_fields: [nombre]
+        hint: Si el artista no aparece, créalo antes en «Artistas».
+      - name: ubicacion
+        label: Ubicación
+        widget: object
+        fields:
+          - name: direccion
+            label: Dirección
+            hint: Tal y como quieres que se lea en la web, p. ej. «Calle Tenderete 12, Argana Alta».
+          - name: coordenadas
+            label: Coordenadas
+            hint: >-
+              En Google Maps, haz **clic derecho** sobre el mural y luego **clic en las coordenadas**
+              que aparecen arriba del menú (se copian solas). Pégalas aquí tal cual, p. ej. `28.97512, -13.56034`.
+            # Formato "lat, lng" y dentro de la zona de Argana Alta (la comprobación exacta contra el
+            # mapa se hace al publicar).
+            pattern:
+              - '^\s*28\.9[6-9]\d*\s*,\s*-13\.5[4-9]\d*\s*$'
+              - 'Pega las coordenadas de Google Maps (p. ej. 28.97512, -13.56034). Deben estar en Argana Alta.'
+      - name: descripcion
+        label: Descripción
+        widget: markdown
+        required: false
+      - name: fotos
+        label: Fotos
+        label_singular: Foto
+        widget: list
+        min: 1
+        hint: La primera foto es la portada (la que se ve en el mapa). Arrastra para reordenar.
+        summary: '{{pie}}'
+        fields:
+          - name: imagen
+            label: Imagen
+            widget: image
+            media_folder: /public/media/murales
+            public_folder: /media/murales
+          - { name: pie, label: Pie de foto, required: false }
+          - { name: credito, label: Crédito, required: false, hint: 'Autor/a de la foto, p. ej. «Foto: Ana Pérez».' }
+
+  - name: artistas
+    label: Artistas
+    label_singular: Artista
+    folder: content/artistas
+    format: json
+    identifier_field: nombre
+    # El nombre del fichero es la URL del artista y lo usan los murales para referenciarlo: se fija al crearlo.
+    slug:
+      template: '{{nombre}}'
+      editable: [create]
+    summary: '{{nombre}}'
+    sortable_fields: [nombre]
+    preview_path: artistas/{{slug}}/
+    fields:
+      - { name: nombre, label: Nombre }
+      - { name: bio, label: Biografía, widget: markdown, required: false }
+      - name: foto
+        label: Foto
+        widget: image
+        required: false
+        media_folder: /public/media/artistas
+        public_folder: /media/artistas
+      - name: instagram
+        label: Instagram
+        required: false
+        hint: Solo el nombre de usuario, sin @ (p. ej. anaperez).
+        pattern: ['^[A-Za-z0-9._]+$', 'Solo el nombre de usuario, sin @ ni enlace.']
+
+singletons:
+  - name: contacto
+    label: Página de contacto
+    file: content/paginas/contacto.md
+    format: frontmatter
+    fields:
+      - { name: titulo, label: Título }
+      - { name: body, label: Texto, widget: markdown }
+  - name: open-call
+    label: Página de open call
+    file: content/paginas/open-call.md
+    format: frontmatter
+    fields:
+      - { name: titulo, label: Título }
+      - { name: body, label: Texto, widget: markdown }
+  - name: ajustes
+    label: Ajustes (email y redes)
+    file: content/ajustes.json
+    format: json
+    fields:
+      - name: email
+        label: Email de contacto
+        required: false
+        pattern: ['^[^@\s]+@[^@\s]+\.[^@\s]+$', 'Email no válido.']
+      - name: redes
+        label: Redes sociales
+        label_singular: Red social
+        widget: list
+        required: false
+        summary: '{{nombre}}'
+        fields:
+          - { name: nombre, label: Nombre, hint: 'P. ej. Instagram' }
+          - { name: url, label: Enlace, pattern: ['^https?://', 'Debe empezar por https://'] }

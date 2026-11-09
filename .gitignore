@@ -6,3 +6,6 @@ dist/
 
 # Memoria de trabajo local del agente (logbook)
 .claude/logbooks/
+
+# Wrangler (Cloudflare) local
+.wrangler/
