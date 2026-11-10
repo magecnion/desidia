@@ -1,13 +1,19 @@
 ---
 import Base from '../layouts/Base.astro';
 import MuralList from '../components/MuralList.astro';
+import MuralMap from '../components/MuralMap.astro';
 import { getArtists, getMurals } from '../data/repository.ts';
+import { availableYears } from '../domain/murals.ts';
+import { ILLUSTRATION, PROJECTION } from '../map/index.ts';
+import { mapData } from '../map/client-data.ts';
 
 const [murals, artists] = await Promise.all([getMurals(), getArtists()]);
+const data = mapData(murals, artists, ILLUSTRATION, PROJECTION);
 ---
 
 <Base>
   <h1>Murales de Argana Alta</h1>
+  <MuralMap data={data} artists={artists} years={availableYears(murals)} />
   <section aria-label="Listado de murales">
     <h2>Listado</h2>
     <MuralList murals={murals} artists={artists} />
