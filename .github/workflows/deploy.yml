@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  workflow_run:
+    workflows: [Content published]
+    types: [completed]
+    branches: [content]
 
 permissions:
   contents: read
@@ -14,7 +18,14 @@ concurrency:
 
 jobs:
   deploy:
-    if: github.ref_type == 'branch'
+    if: >-
+      github.ref_type == 'branch' &&
+      (github.event_name != 'workflow_run' ||
+        (github.ref == 'refs/heads/main' &&
+         github.event.workflow_run.conclusion == 'success' &&
+         github.event.workflow_run.event == 'push' &&
+         github.event.workflow_run.head_branch == 'content' &&
+         github.event.workflow_run.head_repository.full_name == github.repository))
     runs-on: ubuntu-latest
     steps:
       # Resolve the branch again so re-running an old run builds its latest commit.
