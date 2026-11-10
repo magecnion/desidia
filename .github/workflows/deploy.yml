@@ -21,6 +21,18 @@ jobs:
       - uses: actions/checkout@v6
         with:
           ref: refs/heads/${{ github.ref_name }}
+      - name: Check content checkout path
+        run: |
+          if [ -e .deployment-content ] || [ -L .deployment-content ]; then
+            echo '::error::Content checkout path already exists; refusing to overwrite it'
+            exit 1
+          fi
+      - name: Check out content
+        uses: actions/checkout@v6
+        with:
+          ref: refs/heads/content
+          path: .deployment-content
+          persist-credentials: false
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
@@ -31,11 +43,20 @@ jobs:
         env:
           BRANCH: ${{ github.ref_name }}
         run: |
+          content_dir="$GITHUB_WORKSPACE/.deployment-content/content"
+          if [ ! -d "$content_dir" ]; then
+            echo '::error::Content branch is missing its content directory'
+            exit 1
+          fi
+          content_sha=$(git -C .deployment-content rev-parse HEAD)
           echo "name=$(node scripts/worker-name.mjs "$BRANCH")" >> "$GITHUB_OUTPUT"
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "content_sha=$content_sha" >> "$GITHUB_OUTPUT"
+          echo "content_dir=$content_dir" >> "$GITHUB_OUTPUT"
       - run: npm run build
         env:
           GITHUB_SHA: ${{ steps.target.outputs.sha }}
+          CONTENT_DIR: ${{ steps.target.outputs.content_dir }}
       - name: Deploy Worker
         id: deploy
         uses: cloudflare/wrangler-action@v4
@@ -48,6 +69,7 @@ jobs:
           DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment-url }}
           WORKER: ${{ steps.target.outputs.name }}
           COMMIT: ${{ steps.target.outputs.sha }}
+          CONTENT_COMMIT: ${{ steps.target.outputs.content_sha }}
         run: |
           test -n "$DEPLOYMENT_URL"
-          printf '## Deployment\n\nWorker: `%s`\n\nCommit: `%s`\n\nURL: %s\n' "$WORKER" "$COMMIT" "$DEPLOYMENT_URL" >> "$GITHUB_STEP_SUMMARY"
+          printf '## Deployment\n\nWorker: `%s`\n\nCode commit: `%s`\n\nContent commit: `%s`\n\nURL: %s\n' "$WORKER" "$COMMIT" "$CONTENT_COMMIT" "$DEPLOYMENT_URL" >> "$GITHUB_STEP_SUMMARY"
