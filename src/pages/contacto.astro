@@ -1,0 +1,82 @@
+---
+import Base from '../layouts/Base.astro';
+import { getSettings, getPage } from '../data/repository.ts';
+
+const { title, Content } = await getPage('contact');
+const settings = getSettings();
+// Web3Forms public key (https://web3forms.com). Set as an environment variable in Cloudflare Pages.
+const formKey = import.meta.env.PUBLIC_WEB3FORMS_KEY;
+---
+
+<Base title={title}>
+  <h1>{title}</h1>
+  <Content />
+
+  {
+    formKey ? (
+      <form action="https://api.web3forms.com/submit" method="POST" class="form">
+        <input type="hidden" name="access_key" value={formKey} />
+        <input type="hidden" name="subject" value="Nuevo mensaje desde la web de murales" />
+        <input type="checkbox" name="botcheck" class="honeypot" tabindex="-1" autocomplete="off" />
+        <label>
+          Nombre
+          <input type="text" name="nombre" required autocomplete="name" />
+        </label>
+        <label>
+          Email
+          <input type="email" name="email" required autocomplete="email" />
+        </label>
+        <label>
+          Mensaje
+          <textarea name="mensaje" rows="6" required />
+        </label>
+        <button type="submit">Enviar</button>
+      </form>
+    ) : (
+      <p><em>Formulario pendiente de configurar (PUBLIC_WEB3FORMS_KEY).</em></p>
+    )
+  }
+
+  {settings.email && <p><a href={`mailto:${settings.email}`}>{settings.email}</a></p>}
+  {
+    settings.socials.length > 0 && (
+      <ul class="socials">
+        {settings.socials.map((social) => (
+          <li>
+            <a href={social.url} rel="noopener">
+              {social.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</Base>
+
+<style>
+  .form {
+    display: grid;
+    gap: 1rem;
+    max-width: 32rem;
+    margin: 2rem 0;
+  }
+  label {
+    display: grid;
+    gap: 0.25rem;
+  }
+  input,
+  textarea,
+  button {
+    font: inherit;
+    padding: 0.5rem;
+  }
+  .honeypot {
+    display: none;
+  }
+  .socials {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 1rem;
+  }
+</style>
