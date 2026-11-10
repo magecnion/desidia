@@ -1,0 +1,13 @@
+name: Content published
+
+on:
+  push:
+    branches: [content]
+
+permissions: {}
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo 'Content changed; production deployment is handled by main.'
