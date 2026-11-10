@@ -11,3 +11,5 @@ npm test         # tests
 npm run check    # tipos
 npm run build    # valida el contenido y genera dist/
 ```
+
+Variables de entorno: `PUBLIC_WEB3FORMS_KEY` (formulario de contacto).
