@@ -21,29 +21,38 @@ const murales = await getMuralesDeArtista(artista.slug);
 ---
 
 <Base titulo={artista.nombre}>
-  <h1>{artista.nombre}</h1>
-  {artista.foto && <img class="foto" src={artista.foto} alt={artista.nombre} width="320" height="320" />}
-  {artista.bio && <div set:html={markdownAHtml(artista.bio)} />}
-  {
-    artista.instagram && (
-      <p>
-        <a href={instagramUrl(artista.instagram)} rel="noopener">
-          @{artista.instagram}
-        </a>
-      </p>
-    )
-  }
+  <div class="grid gap-8 md:grid-cols-[20rem_1fr]">
+    {
+      artista.foto && (
+        <img
+          src={artista.foto}
+          alt={artista.nombre}
+          width="320"
+          height="320"
+          class="aspect-square w-full max-w-80 rounded-lg border object-cover"
+        />
+      )
+    }
+    <div class={artista.foto ? '' : 'md:col-span-2'}>
+      <h1 class="mb-4 font-display text-5xl leading-none sm:text-6xl">{artista.nombre}</h1>
+      {artista.bio && <div class="prosa" set:html={markdownAHtml(artista.bio)} />}
+      {
+        artista.instagram && (
+          <p class="mt-4">
+            <a href={instagramUrl(artista.instagram)} rel="noopener" class="text-terracotta">
+              @{artista.instagram}
+            </a>
+          </p>
+        )
+      }
+    </div>
+  </div>
 
-  <h2>Murales ({murales.length})</h2>
-  <p><a href={`/?artista=${artista.slug}`}>Ver en el mapa</a></p>
-  <ListaMurales murales={murales} artistas={artistas} />
+  <section class="mt-16">
+    <div class="mb-6 flex flex-wrap items-baseline justify-between gap-4">
+      <h2 class="font-display text-4xl">Murales <span class="font-hand text-3xl text-terracotta">({murales.length})</span></h2>
+      <a href={`/?artista=${artista.slug}`} class="text-terracotta underline-offset-4 hover:underline">Ver en el mapa →</a>
+    </div>
+    <ListaMurales murales={murales} artistas={artistas} />
+  </section>
 </Base>
-
-<style>
-  .foto {
-    width: 20rem;
-    aspect-ratio: 1;
-    object-fit: cover;
-    border-radius: 4px;
-  }
-</style>

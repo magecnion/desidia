@@ -1,6 +1,7 @@
 ---
 import type { Artista } from '../domain/murales.ts';
 import type { DatosMapa } from '../map/datos-cliente.ts';
+import PanelMural from './PanelMural.astro';
 
 interface Props {
   datos: DatosMapa;
@@ -10,70 +11,46 @@ interface Props {
 
 const { datos, artistas, years } = Astro.props;
 const artistasConMurales = artistas.filter((a) => datos.puntos.some((p) => p.artistas.includes(a.slug)));
+const clasesSelector =
+  'cursor-pointer border-2 border-ink bg-paper px-3 py-2 font-hand text-xl text-ink shadow-[3px_3px_0_var(--ink)] transition-transform hover:-translate-y-0.5 focus-visible:-translate-y-0.5';
+const clasesEtiqueta = 'text-xs font-medium tracking-widest text-muted-foreground uppercase';
 ---
 
-<section class="mapa-murales" data-mapa-murales aria-label="Mapa de murales">
-  <div class="filtros">
-    <div class="years" role="group" aria-label="Filtrar por año">
-      <button type="button" data-filtro-year="">Todos</button>
-      {years.map((year) => <button type="button" data-filtro-year={year}>{year}</button>)}
-    </div>
-    <label>
-      <span class="visualmente-oculto">Filtrar por artista</span>
-      <select data-filtro-artista>
-        <option value="">Todos los artistas</option>
+<section data-mapa-murales aria-label="Mapa de murales">
+  <div class="mb-6 flex flex-wrap items-end gap-x-6 gap-y-4">
+    <label class="flex flex-col gap-1">
+      <span class={clasesEtiqueta}>Año</span>
+      <select data-filtro-year class={clasesSelector} aria-label="Filtrar murales por año">
+        <option value="">todos los años</option>
+        {years.map((year) => <option value={year}>{year}</option>)}
+      </select>
+    </label>
+    <label class="flex flex-col gap-1">
+      <span class={clasesEtiqueta}>Artista</span>
+      <select data-filtro-artista class={clasesSelector} aria-label="Filtrar murales por artista">
+        <option value="">todos los artistas</option>
         {artistasConMurales.map((a) => <option value={a.slug}>{a.nombre}</option>)}
       </select>
     </label>
-    <span data-contador aria-live="polite"></span>
-    <button type="button" data-limpiar hidden>Limpiar filtros</button>
+    <button
+      type="button"
+      data-limpiar
+      hidden
+      class="cursor-pointer font-hand text-xl text-terracotta underline decoration-wavy underline-offset-4 hover:text-ink"
+    >
+      quitar filtros ✕
+    </button>
+    <p data-contador aria-live="polite" class="ml-auto font-hand text-lg text-muted-foreground"></p>
   </div>
-  <div class="mapa" style={`aspect-ratio: ${datos.ancho} / ${datos.alto}`}></div>
+  <div
+    class="mapa aspect-[4/5] max-h-[80vh] w-full border-2 border-ink sm:aspect-(--aspecto-ilustracion)"
+    style={`--aspecto-ilustracion: ${datos.ancho} / ${datos.alto}`}
+  >
+  </div>
   <script type="application/json" set:html={JSON.stringify(datos)} />
+  <PanelMural />
 </section>
 
 <script>
   import '../scripts/mapa-murales.ts';
 </script>
-
-<style>
-  .filtros {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    align-items: center;
-    margin-bottom: 0.75rem;
-  }
-  .years {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
-  }
-  button,
-  select {
-    font: inherit;
-    padding: 0.3rem 0.75rem;
-    border: 1px solid #0003;
-    border-radius: 999px;
-    background: white;
-    cursor: pointer;
-  }
-  button[aria-pressed='true'] {
-    background: var(--color-acento);
-    border-color: var(--color-acento);
-    color: white;
-  }
-  .mapa {
-    width: 100%;
-    max-height: 80vh;
-    border-radius: 6px;
-    background: #eee;
-  }
-  .visualmente-oculto {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-</style>
