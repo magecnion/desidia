@@ -1,0 +1,80 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import { getArtists, getMurals } from '../../data/repository.ts';
+import { googleMapsUrl, type Artist, type Mural } from '../../domain/murals.ts';
+import { markdownToHtml } from '../../lib/markdown.ts';
+
+export const getStaticPaths = (async () => {
+  const [murals, artists] = await Promise.all([getMurals(), getArtists()]);
+  return murals.map((mural) => ({ params: { slug: mural.slug }, props: { mural, artists } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  mural: Mural;
+  artists: Artist[];
+}
+
+const { mural, artists } = Astro.props;
+const muralArtists = mural.artists
+  .map((slug) => artists.find((a) => a.slug === slug))
+  .filter((a): a is Artist => a !== undefined);
+---
+
+<Base title={mural.title}>
+  <h1>{mural.title}</h1>
+  <dl>
+    <dt>Año</dt>
+    <dd>{mural.year}</dd>
+    <dt>{muralArtists.length > 1 ? 'Artistas' : 'Artista'}</dt>
+    <dd>
+      {
+        muralArtists.map((artist, i) => (
+          <>
+            {i > 0 && ', '}
+            <a href={`/artistas/${artist.slug}/`}>{artist.name}</a>
+          </>
+        ))
+      }
+    </dd>
+    <dt>Dirección</dt>
+    <dd>
+      {mural.address} · <a href={googleMapsUrl(mural.coordinates)} rel="noopener">Abrir en Google Maps</a>
+    </dd>
+  </dl>
+
+  {mural.description && <div set:html={markdownToHtml(mural.description)} />}
+
+  <section class="gallery" aria-label="Fotos">
+    {
+      mural.photos.map((photo) => (
+        <figure>
+          <img src={photo.image} alt={photo.caption ?? mural.title} loading="lazy" width="1200" height="800" />
+          {(photo.caption || photo.credit) && (
+            <figcaption>
+              {photo.caption}
+              {photo.credit && <small> · {photo.credit}</small>}
+            </figcaption>
+          )}
+        </figure>
+      ))
+    }
+  </section>
+</Base>
+
+<style>
+  dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.25rem 1rem;
+  }
+  dt {
+    font-weight: 700;
+  }
+  dd {
+    margin: 0;
+  }
+  figure {
+    margin: 0 0 1.5rem;
+  }
+</style>

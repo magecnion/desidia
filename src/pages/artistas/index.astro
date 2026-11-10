@@ -1,0 +1,20 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getArtists, getMurals } from '../../data/repository.ts';
+import { muralsByArtist } from '../../domain/murals.ts';
+
+const [artists, murals] = await Promise.all([getArtists(), getMurals()]);
+---
+
+<Base title="Artistas">
+  <h1>Artistas</h1>
+  <ul>
+    {
+      artists.map((artist) => (
+        <li>
+          <a href={`/artistas/${artist.slug}/`}>{artist.name}</a> ({muralsByArtist(murals, artist.slug).length})
+        </li>
+      ))
+    }
+  </ul>
+</Base>
