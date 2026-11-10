@@ -1,0 +1,49 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import ListaMurales from '../../components/ListaMurales.astro';
+import { getArtistas, getMuralesDeArtista } from '../../data/repositorio.ts';
+import { instagramUrl, type Artista } from '../../domain/murales.ts';
+import { markdownAHtml } from '../../lib/markdown.ts';
+
+export const getStaticPaths = (async () => {
+  const artistas = await getArtistas();
+  return artistas.map((artista) => ({ params: { slug: artista.slug }, props: { artista, artistas } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  artista: Artista;
+  artistas: Artista[];
+}
+
+const { artista, artistas } = Astro.props;
+const murales = await getMuralesDeArtista(artista.slug);
+---
+
+<Base titulo={artista.nombre}>
+  <h1>{artista.nombre}</h1>
+  {artista.foto && <img class="foto" src={artista.foto} alt={artista.nombre} width="320" height="320" />}
+  {artista.bio && <div set:html={markdownAHtml(artista.bio)} />}
+  {
+    artista.instagram && (
+      <p>
+        <a href={instagramUrl(artista.instagram)} rel="noopener">
+          @{artista.instagram}
+        </a>
+      </p>
+    )
+  }
+
+  <h2>Murales ({murales.length})</h2>
+  <p><a href={`/?artista=${artista.slug}`}>Ver en el mapa</a></p>
+  <ListaMurales murales={murales} artistas={artistas} />
+</Base>
+
+<style>
+  .foto {
+    width: 20rem;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+</style>
