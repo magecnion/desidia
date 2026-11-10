@@ -1,0 +1,26 @@
+.marcador-mural {
+  background: var(--color-acento);
+  border: 3px solid white;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px #0006;
+}
+
+.popup-mural {
+  display: grid;
+  gap: 0.25rem;
+  width: 240px;
+}
+.popup-mural img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.popup-mural .direccion {
+  opacity: 0.7;
+}
+.popup-mural .enlaces {
+  display: flex;
+  gap: 0.75rem;
+}
