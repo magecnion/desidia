@@ -1,0 +1,13 @@
+{
+  "titulo": "Mural de ejemplo uno",
+  "year": 2023,
+  "artistas": ["ana-perez"],
+  "ubicacion": {
+    "direccion": "Plaza de Argana Alta (ejemplo), Argana Alta, Arrecife",
+    "coordenadas": "28.97895, -13.57065"
+  },
+  "descripcion": "Descripción de ejemplo.",
+  "fotos": [
+    { "imagen": "/media/murales/ejemplo.svg", "pie": "Vista general", "credito": "Foto de ejemplo" }
+  ]
+}

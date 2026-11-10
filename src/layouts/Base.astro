@@ -1,0 +1,95 @@
+---
+interface Props {
+  titulo?: string;
+  descripcion?: string;
+}
+
+const { titulo, descripcion = 'Murales de Argana Alta, Arrecife (Lanzarote)' } = Astro.props;
+const nombreSitio = 'Murales de Argana Alta';
+const tituloCompleto = titulo ? `${titulo} · ${nombreSitio}` : nombreSitio;
+
+const enlaces = [
+  { href: '/', texto: 'Murales' },
+];
+const rutaActual = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{tituloCompleto}</title>
+    <meta name="description" content={descripcion} />
+    <slot name="head" />
+  </head>
+  <body>
+    <header class="cabecera">
+      <a class="marca" href="/">{nombreSitio}</a>
+      <nav>
+        {
+          enlaces.map(({ href, texto }) => (
+            <a href={href} aria-current={rutaActual === href ? 'page' : undefined}>
+              {texto}
+            </a>
+          ))
+        }
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --color-fondo: #faf6f0;
+    --color-texto: #2b2420;
+    --color-acento: #c2552d;
+    --ancho: 72rem;
+    font-family: system-ui, sans-serif;
+    color: var(--color-texto);
+    background: var(--color-fondo);
+  }
+  body {
+    margin: 0;
+  }
+  main {
+    max-width: var(--ancho);
+    margin: 0 auto;
+    padding: 1.5rem 1rem 4rem;
+  }
+  a {
+    color: var(--color-acento);
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+</style>
+
+<style>
+  .cabecera {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #0001;
+  }
+  .marca {
+    font-weight: 700;
+    text-decoration: none;
+    color: inherit;
+  }
+  nav {
+    display: flex;
+    gap: 1rem;
+  }
+  nav a[aria-current='page'] {
+    font-weight: 700;
+  }
+</style>

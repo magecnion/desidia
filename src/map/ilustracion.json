@@ -1,0 +1,19 @@
+{
+  "$comentario": "PROVISIONAL: captura de Google Maps (no publicable). Sustituir por la ilustración y recalibrar en /calibracion/.",
+  "imagen": "/mapa/provisional.png",
+  "ancho": 1426,
+  "alto": 858,
+  "puntosControl": [
+    { "nombre": "C. Luján Pérez × C. Tenderete", "pixel": [499, 20], "coordenadas": "28.981199, -13.567846" },
+    { "nombre": "C. Isa × C. Tajaraste", "pixel": [144, 262], "coordenadas": "28.978299, -13.572720" },
+    { "nombre": "C. El Fausto × C. la Bella Lucía", "pixel": [245, 566], "coordenadas": "28.974649, -13.571334" },
+    { "nombre": "C. Polca × C. Crispín Corujo", "pixel": [478, 489], "coordenadas": "28.975567, -13.568139" },
+    { "nombre": "C. Aires de Lima × C. Tenderete", "pixel": [690, 245], "coordenadas": "28.978503, -13.565227" },
+    { "nombre": "C. Tenderete × C. Crispín Corujo", "pixel": [737, 305], "coordenadas": "28.977715, -13.564539" },
+    { "nombre": "C. Iguazú × C. Toledo", "pixel": [1050, 420], "coordenadas": "28.976402, -13.560298" },
+    { "nombre": "C. Iguazú × C. Guanareme", "pixel": [1270, 242], "coordenadas": "28.978533, -13.557277" },
+    { "nombre": "Mercadona", "pixel": [957, 710], "coordenadas": "28.972884, -13.561578" },
+    { "nombre": "Av. de los Geranios × C. Los Andes", "pixel": [1164, 699], "coordenadas": "28.973054, -13.558731" },
+    { "nombre": "C. Isaac Viera × C. Jesús Soto Morales", "pixel": [490, 822], "coordenadas": "28.971574, -13.567973" }
+  ]
+}
