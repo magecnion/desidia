@@ -1,33 +1,12 @@
 /**
- * Home page: mural markers + year and artist filters synced with the URL.
+ * Home page: mural markers, detail panel and year and artist filters synced with the URL.
  */
 import L from 'leaflet';
 import { filterMurals, type Filter } from '../domain/murals.ts';
-import type { MapData, MapPoint } from '../map/client-data.ts';
-import { createIllustratedMap, muralIcon, pixelToLatLng } from './base-map.ts';
-
-function el<K extends keyof HTMLElementTagNameMap>(tag: K, props: Partial<HTMLElementTagNameMap[K]> = {}, ...children: Node[]) {
-  const node = Object.assign(document.createElement(tag), props);
-  node.append(...children);
-  return node;
-}
-
-function popupContent(point: MapPoint): HTMLElement {
-  return el(
-    'div',
-    { className: 'mural-popup' },
-    el('img', { src: point.cover, alt: point.title, width: 240, height: 160 }),
-    el('strong', { textContent: point.title }),
-    el('span', { textContent: `${point.year} · ${point.artistNames.join(', ')}` }),
-    el('span', { className: 'address', textContent: point.address }),
-    el(
-      'span',
-      { className: 'links' },
-      el('a', { href: `/murales/${point.slug}/`, textContent: 'Ver mural' }),
-      el('a', { href: point.googleMapsUrl, textContent: 'Abrir en Google Maps', target: '_blank', rel: 'noopener' }),
-    ),
-  );
-}
+import type { MapData } from '../map/client-data.ts';
+import { createIllustratedMap, pixelToLatLng } from './base-map.ts';
+import { createMuralMarker, setActive } from './mural-marker.ts';
+import { createMuralPanel } from './mural-panel.ts';
 
 function readFilter(data: MapData): Filter {
   const params = new URLSearchParams(location.search);
@@ -51,16 +30,27 @@ function init(root: HTMLElement) {
   const data: MapData = JSON.parse(root.querySelector('script[type="application/json"]')!.textContent!);
   const map = createIllustratedMap(root.querySelector<HTMLElement>('.map')!, data);
   const layer = L.layerGroup().addTo(map);
+
+  let active: string | null = null;
+  const select = (slug: string | null) => {
+    if (active) setActive(markers.get(active)!, false);
+    active = slug;
+    if (active) setActive(markers.get(active)!, true);
+  };
+  const panel = createMuralPanel(() => select(null));
+
   const markers = new Map(
-    data.points.map((point) => [
-      point.slug,
-      L.marker(pixelToLatLng(point.pixel), { icon: muralIcon(), title: point.title }).bindPopup(() =>
-        popupContent(point),
-      ),
-    ]),
+    data.points.map((point, i) => {
+      const marker = createMuralMarker(point, i, pixelToLatLng(point.pixel));
+      marker.on('click', () => {
+        select(point.slug);
+        panel.open(point);
+      });
+      return [point.slug, marker];
+    }),
   );
 
-  const yearButtons = root.querySelectorAll<HTMLButtonElement>('[data-year-filter]');
+  const yearSelect = root.querySelector<HTMLSelectElement>('[data-year-filter]')!;
   const artistSelect = root.querySelector<HTMLSelectElement>('[data-artist-filter]')!;
   const clearButton = root.querySelector<HTMLButtonElement>('[data-clear]')!;
   const counter = root.querySelector<HTMLElement>('[data-counter]')!;
@@ -73,23 +63,20 @@ function init(root: HTMLElement) {
     layer.clearLayers();
     for (const [slug, marker] of markers) if (visible.has(slug)) layer.addLayer(marker);
     for (const li of listItems) li.hidden = !visible.has(li.dataset.slug!);
+    if (active && !visible.has(active)) panel.close();
+    else if (active) setActive(markers.get(active)!, true);
 
-    for (const button of yearButtons) {
-      const year = button.dataset.yearFilter ? Number(button.dataset.yearFilter) : undefined;
-      button.setAttribute('aria-pressed', String(year === filter.year));
-    }
+    yearSelect.value = filter.year === undefined ? '' : String(filter.year);
     artistSelect.value = filter.artist ?? '';
     clearButton.hidden = filter.year === undefined && filter.artist === undefined;
-    counter.textContent = visible.size === 1 ? '1 mural' : `${visible.size} murales`;
+    counter.textContent = `${visible.size} ${visible.size === 1 ? 'mural' : 'murales'} en el mapa`;
     writeFilter(filter);
   }
 
-  for (const button of yearButtons) {
-    button.addEventListener('click', () => {
-      filter = { ...filter, year: button.dataset.yearFilter ? Number(button.dataset.yearFilter) : undefined };
-      apply();
-    });
-  }
+  yearSelect.addEventListener('change', () => {
+    filter = { ...filter, year: yearSelect.value ? Number(yearSelect.value) : undefined };
+    apply();
+  });
   artistSelect.addEventListener('change', () => {
     filter = { ...filter, artist: artistSelect.value || undefined };
     apply();

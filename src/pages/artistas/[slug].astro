@@ -21,29 +21,38 @@ const murals = await getMuralsByArtist(artist.slug);
 ---
 
 <Base title={artist.name}>
-  <h1>{artist.name}</h1>
-  {artist.photo && <img class="photo" src={artist.photo} alt={artist.name} width="320" height="320" />}
-  {artist.bio && <div set:html={markdownToHtml(artist.bio)} />}
-  {
-    artist.instagram && (
-      <p>
-        <a href={instagramUrl(artist.instagram)} rel="noopener">
-          @{artist.instagram}
-        </a>
-      </p>
-    )
-  }
+  <div class="grid gap-8 md:grid-cols-[20rem_1fr]">
+    {
+      artist.photo && (
+        <img
+          src={artist.photo}
+          alt={artist.name}
+          width="320"
+          height="320"
+          class="aspect-square w-full max-w-80 rounded-lg border object-cover"
+        />
+      )
+    }
+    <div class={artist.photo ? '' : 'md:col-span-2'}>
+      <h1 class="mb-4 font-display text-5xl leading-none sm:text-6xl">{artist.name}</h1>
+      {artist.bio && <div class="rich-text" set:html={markdownToHtml(artist.bio)} />}
+      {
+        artist.instagram && (
+          <p class="mt-4">
+            <a href={instagramUrl(artist.instagram)} rel="noopener" class="text-terracotta">
+              @{artist.instagram}
+            </a>
+          </p>
+        )
+      }
+    </div>
+  </div>
 
-  <h2>Murales ({murals.length})</h2>
-  <p><a href={`/?artista=${artist.slug}`}>Ver en el mapa</a></p>
-  <MuralList murals={murals} artists={artists} />
+  <section class="mt-16">
+    <div class="mb-6 flex flex-wrap items-baseline justify-between gap-4">
+      <h2 class="font-display text-4xl">Murales <span class="font-hand text-3xl text-terracotta">({murals.length})</span></h2>
+      <a href={`/?artista=${artist.slug}`} class="text-terracotta underline-offset-4 hover:underline">Ver en el mapa →</a>
+    </div>
+    <MuralList murals={murals} artists={artists} />
+  </section>
 </Base>
-
-<style>
-  .photo {
-    width: 20rem;
-    aspect-ratio: 1;
-    object-fit: cover;
-    border-radius: 4px;
-  }
-</style>

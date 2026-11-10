@@ -3,6 +3,7 @@
  */
 import type { Artist, Mural } from '../domain/murals.ts';
 import { googleMapsUrl } from '../domain/murals.ts';
+import { markdownToHtml } from '../lib/markdown.ts';
 import type { Illustration, Pixel, Projection } from './projection.ts';
 
 export interface MapPoint {
@@ -12,6 +13,7 @@ export interface MapPoint {
   artists: string[];
   artistNames: string[];
   address: string;
+  descriptionHtml: string;
   googleMapsUrl: string;
   cover: string;
   pixel: Pixel;
@@ -42,6 +44,7 @@ export function mapData(
       artists: m.artists,
       artistNames: m.artists.map(name),
       address: m.address,
+      descriptionHtml: markdownToHtml(m.description),
       googleMapsUrl: googleMapsUrl(m.coordinates),
       cover: m.photos[0].image,
       pixel: projection.toPixel(m.coordinates),

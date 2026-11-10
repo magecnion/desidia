@@ -20,39 +20,51 @@ const ERROR_THRESHOLD_PX = 20;
 
 <Base title="Calibración del mapa">
   <meta name="robots" content="noindex" slot="head" />
-  <h1>Calibración del mapa</h1>
-  <ol>
+  <h1 class="mb-6 font-display text-5xl leading-none">Calibración del mapa</h1>
+  <ol class="rich-text mb-4 list-decimal pl-5">
     <li>Haz clic en un lugar reconocible de la ilustración: se muestra su píxel y un fragmento listo para copiar.</li>
     <li>En Google Maps, clic derecho sobre ese mismo lugar → clic en las coordenadas para copiarlas.</li>
     <li>
       Añade el fragmento a <code>controlPoints</code> en <code>src/map/illustration.json</code> con el nombre y las coordenadas.
     </li>
   </ol>
-  <p>
-    <span class="legend control-point"></span> punto de control · <span class="legend marker"></span> mural
+  <p class="mb-4 flex items-center gap-2 text-sm">
+    <span class="inline-block size-3 border-2 border-card bg-cobalt outline outline-cobalt"></span> punto de control ·
+    <span class="inline-block size-3 rounded-full bg-terracotta"></span> mural
   </p>
 
-  <div class="calibration" data-calibration>
-    <div class="map" style={`aspect-ratio: ${data.width} / ${data.height}`}></div>
+  <div data-calibration>
+    <div
+      class="map max-h-[80vh] min-h-[65vh] w-full sm:min-h-0 cursor-crosshair rounded-lg border"
+      style={`aspect-ratio: ${data.width} / ${data.height}`}
+    >
+    </div>
     <script type="application/json" set:html={JSON.stringify(data)} />
   </div>
 
-  <h2>Error por punto de control</h2>
-  <p>
+  <h2 class="mt-12 mb-3 font-display text-4xl">Error por punto de control</h2>
+  <p class="rich-text mb-4">
     Distancia (en píxeles de la ilustración) entre donde está marcado cada punto y donde lo colocaría la
     transformación calculada sin él. Por encima de {ERROR_THRESHOLD_PX} px conviene revisarlo. Los puntos del borde
     tienden a dar más error porque, al quitarlos, hay que extrapolar.
   </p>
-  <table>
-    <thead><tr><th>Punto</th><th>Píxel</th><th>Coordenadas</th><th>Error (px)</th></tr></thead>
+  <table class="w-full border-collapse text-left text-sm">
+    <thead>
+      <tr class="border-b text-muted-foreground">
+        <th class="px-2 py-1 font-normal">Punto</th>
+        <th class="px-2 py-1 font-normal">Píxel</th>
+        <th class="px-2 py-1 font-normal">Coordenadas</th>
+        <th class="px-2 py-1 font-normal">Error (px)</th>
+      </tr>
+    </thead>
     <tbody>
       {
         data.controlPoints.map((p) => (
-          <tr class={p.errorPx > ERROR_THRESHOLD_PX ? 'high' : undefined}>
-            <td>{p.name}</td>
-            <td>{p.pixel.join(', ')}</td>
-            <td>{p.coordinates}</td>
-            <td>{Number.isNaN(p.errorPx) ? '—' : p.errorPx.toFixed(1)}</td>
+          <tr class:list={['border-b', { 'bg-blush/40': p.errorPx > ERROR_THRESHOLD_PX }]}>
+            <td class="px-2 py-1">{p.name}</td>
+            <td class="px-2 py-1">{p.pixel.join(', ')}</td>
+            <td class="px-2 py-1">{p.coordinates}</td>
+            <td class="px-2 py-1">{Number.isNaN(p.errorPx) ? '—' : p.errorPx.toFixed(1)}</td>
           </tr>
         ))
       }
@@ -62,7 +74,7 @@ const ERROR_THRESHOLD_PX = 20;
 
 <script>
   import L from 'leaflet';
-  import { createIllustratedMap, muralIcon, latLngToPixel, pixelToLatLng } from '../scripts/base-map.ts';
+  import { createIllustratedMap, pointIcon, latLngToPixel, pixelToLatLng } from '../scripts/base-map.ts';
   import type { MapData } from '../map/client-data.ts';
   import type { ControlPoint } from '../map/projection.ts';
 
@@ -80,7 +92,7 @@ const ERROR_THRESHOLD_PX = 20;
       .addTo(map);
   }
   for (const p of data.points) {
-    L.marker(pixelToLatLng(p.pixel), { icon: muralIcon() }).bindTooltip(p.title).addTo(map);
+    L.marker(pixelToLatLng(p.pixel), { icon: pointIcon() }).bindTooltip(p.title).addTo(map);
   }
 
   map.on('click', (event) => {
@@ -99,39 +111,9 @@ const ERROR_THRESHOLD_PX = 20;
 </script>
 
 <style>
-  .map {
-    width: 100%;
-    max-height: 80vh;
-    border-radius: 6px;
-    cursor: crosshair;
-  }
-  table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-  th,
-  td {
-    text-align: left;
-    padding: 0.25rem 0.5rem;
-    border-bottom: 1px solid #0001;
-  }
-  .high {
-    background: #fde2dc;
-  }
-  .legend {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    vertical-align: middle;
-  }
-  .legend.control-point,
-  .calibration :global(.control-marker) {
-    background: #1f6feb;
-    border: 2px solid white;
-    outline: 1px solid #1f6feb;
-  }
-  .legend.marker {
-    background: var(--color-accent);
-    border-radius: 50%;
+  [data-calibration] :global(.control-marker) {
+    background: var(--cobalt);
+    border: 2px solid var(--card);
+    outline: 1px solid var(--cobalt);
   }
 </style>

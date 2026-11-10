@@ -22,38 +22,51 @@ const muralArtists = mural.artists
 ---
 
 <Base title={mural.title}>
-  <h1>{mural.title}</h1>
-  <dl>
-    <dt>Año</dt>
-    <dd>{mural.year}</dd>
-    <dt>{muralArtists.length > 1 ? 'Artistas' : 'Artista'}</dt>
+  <p class="font-hand text-3xl text-terracotta">{mural.year}</p>
+  <h1 class="mb-6 font-display text-5xl leading-none sm:text-6xl">{mural.title}</h1>
+
+  <dl class="mb-8 grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2">
+    <dt class="text-muted-foreground">{muralArtists.length > 1 ? 'Artistas' : 'Artista'}</dt>
     <dd>
       {
         muralArtists.map((artist, i) => (
           <>
             {i > 0 && ', '}
-            <a href={`/artistas/${artist.slug}/`}>{artist.name}</a>
+            <a href={`/artistas/${artist.slug}/`} class="text-terracotta">
+              {artist.name}
+            </a>
           </>
         ))
       }
     </dd>
-    <dt>Dirección</dt>
+    <dt class="text-muted-foreground">Dirección</dt>
     <dd>
-      {mural.address} · <a href={googleMapsUrl(mural.coordinates)} rel="noopener">Abrir en Google Maps</a>
+      {mural.address}
+      <a href={googleMapsUrl(mural.coordinates)} rel="noopener" class="ml-2 whitespace-nowrap text-terracotta">
+        Abrir en Google Maps ↗
+      </a>
     </dd>
   </dl>
 
-  {mural.description && <div set:html={markdownToHtml(mural.description)} />}
+  {mural.description && <div class="rich-text mb-10" set:html={markdownToHtml(mural.description)} />}
 
-  <section class="gallery" aria-label="Fotos">
+  <section class="grid gap-8" aria-label="Fotos">
     {
       mural.photos.map((photo) => (
         <figure>
-          <img src={photo.image} alt={photo.caption ?? mural.title} loading="lazy" width="1200" height="800" />
+          <img
+            src={photo.image}
+            alt={photo.caption ?? mural.title}
+            loading="lazy"
+            width="1200"
+            height="800"
+            class="w-full rounded-lg border"
+          />
           {(photo.caption || photo.credit) && (
-            <figcaption>
+            <figcaption class="mt-2 text-sm text-muted-foreground">
               {photo.caption}
-              {photo.credit && <small> · {photo.credit}</small>}
+              {photo.caption && photo.credit && ' · '}
+              {photo.credit}
             </figcaption>
           )}
         </figure>
@@ -61,20 +74,3 @@ const muralArtists = mural.artists
     }
   </section>
 </Base>
-
-<style>
-  dl {
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    gap: 0.25rem 1rem;
-  }
-  dt {
-    font-weight: 700;
-  }
-  dd {
-    margin: 0;
-  }
-  figure {
-    margin: 0 0 1.5rem;
-  }
-</style>

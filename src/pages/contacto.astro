@@ -1,82 +1,71 @@
 ---
 import Base from '../layouts/Base.astro';
+import Button from '../components/ui/Button.astro';
 import { getSettings, getPage } from '../data/repository.ts';
 
 const { title, Content } = await getPage('contact');
 const settings = getSettings();
 // Web3Forms public key (https://web3forms.com). Set as an environment variable in Cloudflare Pages.
 const formKey = import.meta.env.PUBLIC_WEB3FORMS_KEY;
+const field = 'border-2 border-ink bg-paper px-3 py-2 focus:-translate-y-0.5 focus:shadow-[3px_3px_0_var(--ink)]';
 ---
 
 <Base title={title}>
-  <h1>{title}</h1>
-  <Content />
-
-  {
-    formKey ? (
-      <form action="https://api.web3forms.com/submit" method="POST" class="form">
-        <input type="hidden" name="access_key" value={formKey} />
-        <input type="hidden" name="subject" value="Nuevo mensaje desde la web de murales" />
-        <input type="checkbox" name="botcheck" class="honeypot" tabindex="-1" autocomplete="off" />
-        <label>
-          Nombre
-          <input type="text" name="nombre" required autocomplete="name" />
-        </label>
-        <label>
-          Email
-          <input type="email" name="email" required autocomplete="email" />
-        </label>
-        <label>
-          Mensaje
-          <textarea name="mensaje" rows="6" required />
-        </label>
-        <button type="submit">Enviar</button>
-      </form>
-    ) : (
-      <p><em>Formulario pendiente de configurar (PUBLIC_WEB3FORMS_KEY).</em></p>
-    )
-  }
-
-  {settings.email && <p><a href={`mailto:${settings.email}`}>{settings.email}</a></p>}
-  {
-    settings.socials.length > 0 && (
-      <ul class="socials">
-        {settings.socials.map((social) => (
-          <li>
-            <a href={social.url} rel="noopener">
-              {social.name}
+  <h1 class="mb-8 font-display text-5xl leading-none sm:text-6xl">{title}</h1>
+  <div class="grid gap-12 md:grid-cols-2">
+    <div>
+      <div class="rich-text">
+        <Content />
+      </div>
+      {
+        settings.email && (
+          <p class="mt-6">
+            <a href={`mailto:${settings.email}`} class="text-terracotta">
+              {settings.email}
             </a>
-          </li>
-        ))}
-      </ul>
-    )
-  }
-</Base>
+          </p>
+        )
+      }
+      {
+        settings.socials.length > 0 && (
+          <ul class="mt-4 flex list-none flex-wrap gap-4 p-0">
+            {settings.socials.map((social) => (
+              <li>
+                <a href={social.url} rel="noopener" class="text-terracotta">
+                  {social.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
 
-<style>
-  .form {
-    display: grid;
-    gap: 1rem;
-    max-width: 32rem;
-    margin: 2rem 0;
-  }
-  label {
-    display: grid;
-    gap: 0.25rem;
-  }
-  input,
-  textarea,
-  button {
-    font: inherit;
-    padding: 0.5rem;
-  }
-  .honeypot {
-    display: none;
-  }
-  .socials {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    gap: 1rem;
-  }
-</style>
+    {
+      formKey ? (
+        <form action="https://api.web3forms.com/submit" method="POST" class="grid max-w-lg gap-4">
+          <input type="hidden" name="access_key" value={formKey} />
+          <input type="hidden" name="subject" value="Nuevo mensaje desde la web de murales" />
+          <input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off" />
+          <label class="grid gap-1">
+            Nombre
+            <input type="text" name="nombre" required autocomplete="name" class={field} />
+          </label>
+          <label class="grid gap-1">
+            Email
+            <input type="email" name="email" required autocomplete="email" class={field} />
+          </label>
+          <label class="grid gap-1">
+            Mensaje
+            <textarea name="mensaje" rows="6" required class={field} />
+          </label>
+          <Button type="submit" variant="ink" size="xl" class="justify-self-start">
+            Enviar
+          </Button>
+        </form>
+      ) : (
+        <p class="text-muted-foreground italic">Formulario pendiente de configurar (PUBLIC_WEB3FORMS_KEY).</p>
+      )
+    }
+  </div>
+</Base>

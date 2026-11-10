@@ -6,6 +6,8 @@ const { title, Content } = await getPage('open-call');
 ---
 
 <Base title={title}>
-  <h1>{title}</h1>
-  <Content />
+  <h1 class="mb-8 font-display text-5xl leading-none sm:text-6xl">{title}</h1>
+  <div class="rich-text">
+    <Content />
+  </div>
 </Base>

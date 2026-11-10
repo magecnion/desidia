@@ -1,6 +1,7 @@
 ---
 import type { Artist } from '../domain/murals.ts';
 import type { MapData } from '../map/client-data.ts';
+import MuralPanel from './MuralPanel.astro';
 
 interface Props {
   data: MapData;
@@ -10,70 +11,46 @@ interface Props {
 
 const { data, artists, years } = Astro.props;
 const artistsWithMurals = artists.filter((a) => data.points.some((p) => p.artists.includes(a.slug)));
+const selectClasses =
+  'cursor-pointer border-2 border-ink bg-paper px-3 py-2 font-hand text-xl text-ink shadow-[3px_3px_0_var(--ink)] transition-transform hover:-translate-y-0.5 focus-visible:-translate-y-0.5';
+const labelClasses = 'text-xs font-medium tracking-widest text-muted-foreground uppercase';
 ---
 
-<section class="mural-map" data-mural-map aria-label="Mapa de murales">
-  <div class="filters">
-    <div class="years" role="group" aria-label="Filtrar por año">
-      <button type="button" data-year-filter="">Todos</button>
-      {years.map((year) => <button type="button" data-year-filter={year}>{year}</button>)}
-    </div>
-    <label>
-      <span class="visually-hidden">Filtrar por artista</span>
-      <select data-artist-filter>
-        <option value="">Todos los artistas</option>
+<section data-mural-map aria-label="Mapa de murales">
+  <div class="mb-6 flex flex-wrap items-end gap-x-6 gap-y-4">
+    <label class="flex flex-col gap-1">
+      <span class={labelClasses}>Año</span>
+      <select data-year-filter class={selectClasses} aria-label="Filtrar murales por año">
+        <option value="">todos los años</option>
+        {years.map((year) => <option value={year}>{year}</option>)}
+      </select>
+    </label>
+    <label class="flex flex-col gap-1">
+      <span class={labelClasses}>Artista</span>
+      <select data-artist-filter class={selectClasses} aria-label="Filtrar murales por artista">
+        <option value="">todos los artistas</option>
         {artistsWithMurals.map((a) => <option value={a.slug}>{a.name}</option>)}
       </select>
     </label>
-    <span data-counter aria-live="polite"></span>
-    <button type="button" data-clear hidden>Limpiar filtros</button>
+    <button
+      type="button"
+      data-clear
+      hidden
+      class="cursor-pointer font-hand text-xl text-terracotta underline decoration-wavy underline-offset-4 hover:text-ink"
+    >
+      quitar filtros ✕
+    </button>
+    <p data-counter aria-live="polite" class="ml-auto font-hand text-lg text-muted-foreground"></p>
   </div>
-  <div class="map" style={`aspect-ratio: ${data.width} / ${data.height}`}></div>
+  <div
+    class="map aspect-[4/5] max-h-[80vh] w-full border-2 border-ink sm:aspect-(--illustration-aspect)"
+    style={`--illustration-aspect: ${data.width} / ${data.height}`}
+  >
+  </div>
   <script type="application/json" set:html={JSON.stringify(data)} />
+  <MuralPanel />
 </section>
 
 <script>
   import '../scripts/mural-map.ts';
 </script>
-
-<style>
-  .filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    align-items: center;
-    margin-bottom: 0.75rem;
-  }
-  .years {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
-  }
-  button,
-  select {
-    font: inherit;
-    padding: 0.3rem 0.75rem;
-    border: 1px solid #0003;
-    border-radius: 999px;
-    background: white;
-    cursor: pointer;
-  }
-  button[aria-pressed='true'] {
-    background: var(--color-accent);
-    border-color: var(--color-accent);
-    color: white;
-  }
-  .map {
-    width: 100%;
-    max-height: 80vh;
-    border-radius: 6px;
-    background: #eee;
-  }
-  .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-</style>

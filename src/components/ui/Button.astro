@@ -1,0 +1,28 @@
+---
+/**
+ * Design system button. With `href` it renders as a link (equivalent to the prototype's `asChild`).
+ */
+import type { HTMLAttributes } from 'astro/types';
+import { buttonClasses, type ButtonSize, type ButtonVariant } from './button.ts';
+
+type Props = (HTMLAttributes<'button'> | HTMLAttributes<'a'>) & {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  href?: string;
+};
+
+const { variant, size, href, class: className, ...rest } = Astro.props;
+const classes = buttonClasses(variant, size, className ?? '');
+---
+
+{
+  href ? (
+    <a href={href} class={classes} {...(rest as HTMLAttributes<'a'>)}>
+      <slot />
+    </a>
+  ) : (
+    <button type="button" class={classes} {...(rest as HTMLAttributes<'button'>)}>
+      <slot />
+    </button>
+  )
+}

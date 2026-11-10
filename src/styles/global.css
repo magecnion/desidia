@@ -1,0 +1,190 @@
+/*
+ * Visual theme (adapted from the Lovable prototype).
+ * Changes from the original:
+ * - @source points to src/ from src/styles/.
+ * - Self-hosted fonts with Fontsource instead of Google Fonts (the families are called "… Variable").
+ * - No tw-animate-css or dark variant: only the prototype's shadcn components used them.
+ */
+@import 'tailwindcss' source(none);
+@source '../';
+
+@import '@fontsource-variable/work-sans/wght.css';
+@import '@fontsource-variable/caveat/wght.css';
+@import '@fontsource/instrument-serif/400.css';
+@import '@fontsource/instrument-serif/400-italic.css';
+
+@theme inline {
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-sans: 'Work Sans Variable', 'Work Sans', system-ui, sans-serif;
+  --font-hand: 'Caveat Variable', 'Caveat', cursive;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-ink: var(--ink);
+  --color-terracotta: var(--terracotta);
+  --color-ochre: var(--ochre);
+  --color-teal: var(--teal);
+  --color-cobalt: var(--cobalt);
+  --color-olive: var(--olive);
+  --color-blush: var(--blush);
+  --color-river: var(--river);
+}
+
+:root {
+  --radius: 0.25rem;
+  --paper: oklch(0.95 0.025 80);
+  --paper-deep: oklch(0.9 0.035 75);
+  --ink: oklch(0.26 0.025 50);
+  --terracotta: oklch(0.6 0.15 40);
+  --ochre: oklch(0.79 0.14 80);
+  --teal: oklch(0.43 0.07 210);
+  --cobalt: oklch(0.5 0.17 260);
+  --olive: oklch(0.56 0.08 120);
+  --blush: oklch(0.76 0.1 25);
+  --river: oklch(0.82 0.05 220);
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: oklch(0.97 0.018 82);
+  --card-foreground: var(--ink);
+  --popover: var(--card);
+  --popover-foreground: var(--ink);
+  --primary: var(--terracotta);
+  --primary-foreground: oklch(0.97 0.018 82);
+  --secondary: var(--paper-deep);
+  --secondary-foreground: var(--ink);
+  --muted: var(--paper-deep);
+  --muted-foreground: oklch(0.45 0.03 55);
+  --accent: var(--ochre);
+  --accent-foreground: var(--ink);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.97 0 0);
+  --border: oklch(0.26 0.025 50 / 25%);
+  --input: oklch(0.26 0.025 50 / 25%);
+  --ring: var(--terracotta);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    background-image:
+      radial-gradient(circle at 20% 10%, oklch(0.97 0.02 85 / 70%), transparent 40%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .22 0 0 0 0 .12 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  :focus-visible {
+    outline: 2px dashed var(--terracotta);
+    outline-offset: 4px;
+  }
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+}
+@utility font-hand {
+  font-family: var(--font-hand);
+}
+
+@utility sketch-draw {
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+@keyframes morph {
+  0%,
+  100% {
+    border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%;
+    transform: rotate(0deg);
+  }
+  50% {
+    border-radius: 40% 60% 45% 55% / 60% 40% 60% 40%;
+    transform: rotate(160deg);
+  }
+}
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+@utility animate-morph {
+  animation: morph 7s ease-in-out infinite;
+}
+@utility animate-bob {
+  animation: bob 3.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Long text that comes as markdown from the content (bios, descriptions, pages). */
+@layer components {
+  .rich-text {
+    max-width: 65ch;
+    line-height: 1.65;
+  }
+  .rich-text > * + * {
+    margin-top: 1em;
+  }
+  .rich-text h2,
+  .rich-text h3 {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    line-height: 1.2;
+    margin-top: 1.5em;
+  }
+  .rich-text a {
+    color: var(--terracotta);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .rich-text ul {
+    list-style: disc;
+    padding-left: 1.25em;
+  }
+  .rich-text ol {
+    list-style: decimal;
+    padding-left: 1.25em;
+  }
+  .rich-text strong {
+    font-weight: 600;
+  }
+}

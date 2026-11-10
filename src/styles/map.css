@@ -1,26 +1,46 @@
-.mural-marker {
-  background: var(--color-accent);
-  border: 3px solid white;
-  border-radius: 50%;
-  box-shadow: 0 1px 4px #0006;
+/* Elements created by Leaflet (outside the reach of the components' Tailwind classes). */
+.leaflet-container {
+  font-family: var(--font-sans);
+  background: var(--paper-deep);
 }
 
-.mural-popup {
-  display: grid;
-  gap: 0.25rem;
-  width: 240px;
+/* Mural marker root: no size of its own, the content is centred over the point. */
+.mural-marker {
+  width: 0;
+  height: 0;
 }
-.mural-popup img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 3 / 2;
-  object-fit: cover;
-  border-radius: 4px;
+.mural-marker:focus-visible {
+  outline: none;
 }
-.mural-popup .address {
-  opacity: 0.7;
+
+/* Plain point of the calibration tool. */
+.point-marker {
+  background: var(--terracotta);
+  border: 3px solid var(--card);
+  border-radius: 50%;
+  box-shadow: 0 1px 4px oklch(0.26 0.025 50 / 45%);
 }
-.mural-popup .links {
-  display: flex;
-  gap: 0.75rem;
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: var(--card);
+  color: var(--ink);
+  border-radius: var(--radius);
+}
+
+.leaflet-bar,
+.leaflet-touch .leaflet-bar {
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.leaflet-bar a,
+.leaflet-touch .leaflet-bar a {
+  background: var(--paper);
+  color: var(--ink);
+  border-color: var(--ink);
+  border-radius: 0 !important;
+}
+.leaflet-bar a:hover {
+  background: var(--paper-deep);
 }

@@ -1,11 +1,13 @@
 ---
+import '../styles/global.css';
+
 interface Props {
   title?: string;
   description?: string;
 }
 
 const { title, description = 'Murales de Argana Alta, Arrecife (Lanzarote)' } = Astro.props;
-const siteName = 'Murales de Argana Alta';
+const siteName = 'Desidia';
 const fullTitle = title ? `${title} · ${siteName}` : siteName;
 
 const links = [
@@ -15,6 +17,7 @@ const links = [
   { href: '/contacto/', text: 'Contacto' },
 ];
 const currentPath = Astro.url.pathname;
+const isCurrent = (href: string) => (href === '/' ? currentPath === '/' : currentPath.startsWith(href));
 ---
 
 <!doctype html>
@@ -27,72 +30,27 @@ const currentPath = Astro.url.pathname;
     <meta name="description" content={description} />
     <slot name="head" />
   </head>
-  <body>
-    <header class="site-header">
-      <a class="brand" href="/">{siteName}</a>
-      <nav>
-        {
-          links.map(({ href, text }) => (
-            <a href={href} aria-current={currentPath === href ? 'page' : undefined}>
-              {text}
-            </a>
-          ))
-        }
-      </nav>
+  <body class="min-h-screen antialiased">
+    <header class="border-b">
+      <div class="mx-auto flex max-w-6xl flex-wrap items-baseline justify-between gap-x-8 gap-y-2 px-4 py-5">
+        <a href="/" class="font-display text-3xl leading-none text-ink no-underline">{siteName}</a>
+        <nav class="flex flex-wrap gap-x-6 gap-y-1">
+          {
+            links.map(({ href, text }) => (
+              <a
+                href={href}
+                aria-current={isCurrent(href) ? 'page' : undefined}
+                class="text-ink underline-offset-8 decoration-terracotta decoration-2 hover:text-terracotta aria-[current=page]:underline"
+              >
+                {text}
+              </a>
+            ))
+          }
+        </nav>
+      </div>
     </header>
-    <main>
+    <main class="mx-auto max-w-6xl px-4 pt-8 pb-20">
       <slot />
     </main>
   </body>
 </html>
-
-<style is:global>
-  :root {
-    --color-background: #faf6f0;
-    --color-text: #2b2420;
-    --color-accent: #c2552d;
-    --max-width: 72rem;
-    font-family: system-ui, sans-serif;
-    color: var(--color-text);
-    background: var(--color-background);
-  }
-  body {
-    margin: 0;
-  }
-  main {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: 1.5rem 1rem 4rem;
-  }
-  a {
-    color: var(--color-accent);
-  }
-  img {
-    max-width: 100%;
-    height: auto;
-  }
-</style>
-
-<style>
-  .site-header {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    border-bottom: 1px solid #0001;
-  }
-  .brand {
-    font-weight: 700;
-    text-decoration: none;
-    color: inherit;
-  }
-  nav {
-    display: flex;
-    gap: 1rem;
-  }
-  nav a[aria-current='page'] {
-    font-weight: 700;
-  }
-</style>

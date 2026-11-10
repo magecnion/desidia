@@ -7,14 +7,20 @@ const [artists, murals] = await Promise.all([getArtists(), getMurals()]);
 ---
 
 <Base title="Artistas">
-  <h1>Artistas</h1>
-  <ul>
+  <h1 class="mb-8 font-display text-5xl leading-none sm:text-6xl">Artistas</h1>
+  <ul class="grid list-none gap-x-8 p-0 sm:grid-cols-2 lg:grid-cols-3">
     {
-      artists.map((artist) => (
-        <li>
-          <a href={`/artistas/${artist.slug}/`}>{artist.name}</a> ({muralsByArtist(murals, artist.slug).length})
-        </li>
-      ))
+      artists.map((artist) => {
+        const total = muralsByArtist(murals, artist.slug).length;
+        return (
+          <li class="border-b py-3">
+            <a href={`/artistas/${artist.slug}/`} class="group flex items-baseline justify-between gap-4 text-ink no-underline">
+              <span class="font-display text-2xl group-hover:text-terracotta">{artist.name}</span>
+              <span class="font-hand text-xl text-terracotta">{total === 1 ? '1 mural' : `${total} murales`}</span>
+            </a>
+          </li>
+        );
+      })
     }
   </ul>
 </Base>
