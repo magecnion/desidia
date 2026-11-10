@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 
 export function workerName(branch, { previewOnly = false } = {}) {
@@ -7,10 +6,10 @@ export function workerName(branch, { previewOnly = false } = {}) {
     if (previewOnly) throw new Error('Refusing to delete production');
     return 'desidia';
   }
-  const hash = createHash('sha256').update(branch).digest('hex').slice(0, 12);
   const safe = branch.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'branch';
-  // 63 characters: prefix (8), branch (42), separator (1), hash (12).
-  return `desidia-${safe.slice(0, 42).replace(/-+$/, '')}-${hash}`;
+  const name = safe.slice(0, 63).replace(/-+$/, '');
+  if (name === 'desidia') throw new Error('Worker name desidia is reserved for production');
+  return name;
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
