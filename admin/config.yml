@@ -1,0 +1,28 @@
+backend:
+  name: github
+  repo: magecnion/desidia
+  branch: main
+  skip_ci: false
+  base_url: https://sveltia-cms-auth.idurly.workers.dev/
+
+media_folder: content/media
+
+editor:
+  preview: false
+
+collections:
+  - name: artists
+    label: Artists
+    label_singular: Artist
+    folder: content/artists
+    create: true
+    delete: true
+    format: json
+    extension: json
+    identifier_field: name
+    slug: "{{uuid}}"
+    fields:
+      - name: name
+        label: Name
+        widget: string
+        required: true
