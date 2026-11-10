@@ -1,0 +1,19 @@
+{
+  "$comment": "PROVISIONAL: Google Maps screenshot (not publishable). Replace with the illustration and recalibrate at /calibracion/.",
+  "image": "/map/provisional.png",
+  "width": 1426,
+  "height": 858,
+  "controlPoints": [
+    { "name": "C. Luján Pérez × C. Tenderete", "pixel": [499, 20], "coordinates": "28.981199, -13.567846" },
+    { "name": "C. Isa × C. Tajaraste", "pixel": [144, 262], "coordinates": "28.978299, -13.572720" },
+    { "name": "C. El Fausto × C. la Bella Lucía", "pixel": [245, 566], "coordinates": "28.974649, -13.571334" },
+    { "name": "C. Polca × C. Crispín Corujo", "pixel": [478, 489], "coordinates": "28.975567, -13.568139" },
+    { "name": "C. Aires de Lima × C. Tenderete", "pixel": [690, 245], "coordinates": "28.978503, -13.565227" },
+    { "name": "C. Tenderete × C. Crispín Corujo", "pixel": [737, 305], "coordinates": "28.977715, -13.564539" },
+    { "name": "C. Iguazú × C. Toledo", "pixel": [1050, 420], "coordinates": "28.976402, -13.560298" },
+    { "name": "C. Iguazú × C. Guanareme", "pixel": [1270, 242], "coordinates": "28.978533, -13.557277" },
+    { "name": "Mercadona", "pixel": [957, 710], "coordinates": "28.972884, -13.561578" },
+    { "name": "Av. de los Geranios × C. Los Andes", "pixel": [1164, 699], "coordinates": "28.973054, -13.558731" },
+    { "name": "C. Isaac Viera × C. Jesús Soto Morales", "pixel": [490, 822], "coordinates": "28.971574, -13.567973" }
+  ]
+}

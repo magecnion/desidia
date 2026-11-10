@@ -1,0 +1,44 @@
+---
+import type { Artist, Mural } from '../domain/murals.ts';
+
+interface Props {
+  mural: Mural;
+  artists: Artist[];
+}
+
+const { mural, artists } = Astro.props;
+const names = mural.artists.map((slug) => artists.find((a) => a.slug === slug)?.name ?? slug);
+const cover = mural.photos[0];
+---
+
+<article class="card">
+  <a href={`/murales/${mural.slug}/`}>
+    <img src={cover.image} alt={cover.caption ?? mural.title} loading="lazy" width="400" height="267" />
+    <h3>{mural.title}</h3>
+  </a>
+  <p>{mural.year} · {names.join(', ')}</p>
+  <p class="address">{mural.address}</p>
+</article>
+
+<style>
+  .card a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .card img {
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    width: 100%;
+    border-radius: 4px;
+  }
+  h3 {
+    margin: 0.5rem 0 0.25rem;
+  }
+  p {
+    margin: 0;
+  }
+  .address {
+    opacity: 0.7;
+    font-size: 0.9em;
+  }
+</style>

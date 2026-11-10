@@ -1,0 +1,95 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = 'Murales de Argana Alta, Arrecife (Lanzarote)' } = Astro.props;
+const siteName = 'Murales de Argana Alta';
+const fullTitle = title ? `${title} · ${siteName}` : siteName;
+
+const links = [
+  { href: '/', text: 'Murales' },
+];
+const currentPath = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <slot name="head" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/">{siteName}</a>
+      <nav>
+        {
+          links.map(({ href, text }) => (
+            <a href={href} aria-current={currentPath === href ? 'page' : undefined}>
+              {text}
+            </a>
+          ))
+        }
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --color-background: #faf6f0;
+    --color-text: #2b2420;
+    --color-accent: #c2552d;
+    --max-width: 72rem;
+    font-family: system-ui, sans-serif;
+    color: var(--color-text);
+    background: var(--color-background);
+  }
+  body {
+    margin: 0;
+  }
+  main {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 1.5rem 1rem 4rem;
+  }
+  a {
+    color: var(--color-accent);
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+</style>
+
+<style>
+  .site-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #0001;
+  }
+  .brand {
+    font-weight: 700;
+    text-decoration: none;
+    color: inherit;
+  }
+  nav {
+    display: flex;
+    gap: 1rem;
+  }
+  nav a[aria-current='page'] {
+    font-weight: 700;
+  }
+</style>

@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+import MuralList from '../components/MuralList.astro';
+import { getArtists, getMurals } from '../data/repository.ts';
+
+const [murals, artists] = await Promise.all([getMurals(), getArtists()]);
+---
+
+<Base>
+  <h1>Murales de Argana Alta</h1>
+  <section aria-label="Listado de murales">
+    <h2>Listado</h2>
+    <MuralList murals={murals} artists={artists} />
+  </section>
+</Base>

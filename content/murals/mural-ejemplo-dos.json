@@ -1,0 +1,10 @@
+{
+  "title": "Mural de ejemplo dos",
+  "year": 2024,
+  "artists": ["ana-perez", "colectivo-sal"],
+  "location": {
+    "address": "C. Tenderete (ejemplo), Argana Alta, Arrecife",
+    "coordinates": "28.97760, -13.56440"
+  },
+  "photos": [{ "image": "/media/murals/example.svg" }]
+}
