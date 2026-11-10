@@ -1,0 +1,79 @@
+---
+import type { Artista } from '../domain/murales.ts';
+import type { DatosMapa } from '../map/datos-cliente.ts';
+
+interface Props {
+  datos: DatosMapa;
+  artistas: Artista[];
+  years: number[];
+}
+
+const { datos, artistas, years } = Astro.props;
+const artistasConMurales = artistas.filter((a) => datos.puntos.some((p) => p.artistas.includes(a.slug)));
+---
+
+<section class="mapa-murales" data-mapa-murales aria-label="Mapa de murales">
+  <div class="filtros">
+    <div class="years" role="group" aria-label="Filtrar por año">
+      <button type="button" data-filtro-year="">Todos</button>
+      {years.map((year) => <button type="button" data-filtro-year={year}>{year}</button>)}
+    </div>
+    <label>
+      <span class="visualmente-oculto">Filtrar por artista</span>
+      <select data-filtro-artista>
+        <option value="">Todos los artistas</option>
+        {artistasConMurales.map((a) => <option value={a.slug}>{a.nombre}</option>)}
+      </select>
+    </label>
+    <span data-contador aria-live="polite"></span>
+    <button type="button" data-limpiar hidden>Limpiar filtros</button>
+  </div>
+  <div class="mapa" style={`aspect-ratio: ${datos.ancho} / ${datos.alto}`}></div>
+  <script type="application/json" set:html={JSON.stringify(datos)} />
+</section>
+
+<script>
+  import '../scripts/mapa-murales.ts';
+</script>
+
+<style>
+  .filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+  .years {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  button,
+  select {
+    font: inherit;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid #0003;
+    border-radius: 999px;
+    background: white;
+    cursor: pointer;
+  }
+  button[aria-pressed='true'] {
+    background: var(--color-acento);
+    border-color: var(--color-acento);
+    color: white;
+  }
+  .mapa {
+    width: 100%;
+    max-height: 80vh;
+    border-radius: 6px;
+    background: #eee;
+  }
+  .visualmente-oculto {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+</style>
