@@ -1,0 +1,53 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: worker-${{ github.repository }}-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref_type == 'branch'
+    runs-on: ubuntu-latest
+    steps:
+      # Resolve the branch again so re-running an old run builds its latest commit.
+      - uses: actions/checkout@v6
+        with:
+          ref: refs/heads/${{ github.ref_name }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Resolve deployment
+        id: target
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          echo "name=$(node scripts/worker-name.mjs "$BRANCH")" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - run: npm run build
+        env:
+          GITHUB_SHA: ${{ steps.target.outputs.sha }}
+      - name: Deploy Worker
+        id: deploy
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --name ${{ steps.target.outputs.name }}
+      - name: Publish deployment URL
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment-url }}
+          WORKER: ${{ steps.target.outputs.name }}
+          COMMIT: ${{ steps.target.outputs.sha }}
+        run: |
+          test -n "$DEPLOYMENT_URL"
+          printf '## Deployment\n\nWorker: `%s`\n\nCommit: `%s`\n\nURL: %s\n' "$WORKER" "$COMMIT" "$DEPLOYMENT_URL" >> "$GITHUB_STEP_SUMMARY"
