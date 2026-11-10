@@ -1,7 +1,7 @@
 backend:
   name: github
   repo: magecnion/desidia
-  branch: main
+  branch: content
   skip_ci: false
   base_url: https://sveltia-cms-auth.idurly.workers.dev/
 
