@@ -9,7 +9,7 @@ import {
   availableYears,
   type Mural,
 } from '../src/domain/murals.ts';
-import { MuralFileSchema } from '../src/domain/schema.ts';
+import { ArtistFileSchema, MuralFileSchema, SettingsFileSchema } from '../src/domain/schema.ts';
 
 const inCanaryIslands = ({ lat }: { lat: number }) => lat > 27 && lat < 30;
 
@@ -64,4 +64,11 @@ test('validateIntegrity detects missing artists and points outside the map', () 
   assert.deepEqual(validateIntegrity([mural('a', 2024, ['x'])], artists, inCanaryIslands), []);
   const errors = validateIntegrity([mural('b', 2024, ['z'], 40.4, -3.7)], artists, inCanaryIslands);
   assert.equal(errors.length, 2);
+});
+
+test('empty or null optional fields count as missing', () => {
+  const artist = ArtistFileSchema.parse({ name: 'X', bio: '', photo: null, instagram: '' });
+  assert.deepEqual(artist, { name: 'X', bio: undefined, photo: undefined, instagram: undefined });
+  assert.ok(!ArtistFileSchema.safeParse({ name: 'X', instagram: '@at-sign' }).success);
+  assert.deepEqual(SettingsFileSchema.parse({ email: '', socials: null }), { email: undefined, socials: [] });
 });

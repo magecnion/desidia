@@ -13,3 +13,6 @@ npm run build    # valida el contenido y genera dist/
 ```
 
 Variables de entorno: `PUBLIC_WEB3FORMS_KEY` (formulario de contacto).
+
+Editor de contenido en `/admin/` (Sveltia CMS). Despliegue en Cloudflare Workers: ver
+[docs/despliegue.md](docs/despliegue.md).
