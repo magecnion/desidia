@@ -20,6 +20,7 @@
     "wrangler": "4.159.0"
   },
   "dependencies": {
-    "astro": "7.4.10"
+    "astro": "7.4.10",
+    "zod": "4.6.7"
   }
 }
