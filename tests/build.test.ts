@@ -77,6 +77,22 @@ test('build renders the commit, publishes the CMS and copies uploaded media', as
   }
 });
 
+test('build rejects artists that break the domain schema and keeps the previous output', async t => {
+  const outDir = await temporaryDirectory(t);
+  const content = await temporaryDirectory(t);
+  await mkdir(join(content, 'artists'));
+  const artist = join(content, 'artists/artist.json');
+  await writeFile(artist, '{"name":"valid"}');
+  build(outDir, content);
+  const previous = await readFile(join(outDir, 'index.html'), 'utf8');
+
+  for (const value of ['{broken', '{}', '{"name":" "}', '{"name":123}', '{"name":"valid","bio":"unknown"}']) {
+    await writeFile(artist, value);
+    assert.throws(() => build(outDir, content), /artist/);
+    assert.equal(await readFile(join(outDir, 'index.html'), 'utf8'), previous);
+  }
+});
+
 test('build fails before writing output when the media path is not a directory', async t => {
   const outDir = join(await temporaryDirectory(t), 'dist');
   const content = await temporaryDirectory(t);
