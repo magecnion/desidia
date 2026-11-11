@@ -34,9 +34,9 @@ test('commit SHA comes from GITHUB_SHA and must be a full SHA', () => {
   assert.throws(() => resolveCommitSha('abc123'), /full Git commit SHA/);
 });
 
-test('content directory defaults to ./content and resolves CONTENT_DIR from the root', async t => {
+test('content directory defaults to ./sample-content and resolves CONTENT_DIR from the root', async t => {
   const external = await temporaryDirectory(t);
-  assert.equal(resolveContentDirectory(undefined, root), join(root, 'content'));
+  assert.equal(resolveContentDirectory(undefined, root), join(root, 'sample-content'));
   assert.equal(resolveContentDirectory(external, root), external);
   assert.equal(resolveContentDirectory(relative(root, external), root), external);
 });
@@ -99,4 +99,40 @@ test('build fails before writing output when the media path is not a directory',
   await writeFile(join(content, 'media'), 'not a directory');
   assert.throws(() => build(outDir, content), /Content media must be a directory/);
   await assert.rejects(stat(outDir), { code: 'ENOENT' });
+});
+
+test('build lists artists sorted by name and escapes their names', async t => {
+  const outDir = await temporaryDirectory(t);
+  const content = await temporaryDirectory(t);
+  await mkdir(join(content, 'artists'));
+  await writeFile(join(content, 'artists/b.json'), '{"name":"Marco <Ruiz> & \'co\'"}');
+  await writeFile(join(content, 'artists/a.json'), '{"name":"Ana Pérez"}');
+  for (const file of ['README.md', '.gitkeep']) await writeFile(join(content, 'artists', file), 'not JSON');
+
+  build(outDir, content);
+
+  const html = await readFile(join(outDir, 'index.html'), 'utf8');
+  assert.match(html, /<li>Ana Pérez<\/li><li>Marco &lt;Ruiz&gt; &amp; &#39;co&#39;<\/li>/);
+});
+
+test('build shows an empty state without artists and drops deleted artists', async t => {
+  const outDir = await temporaryDirectory(t);
+  const content = await temporaryDirectory(t);
+  build(outDir, content);
+  assert.match(await readFile(join(outDir, 'index.html'), 'utf8'), /No artists yet\./);
+
+  await mkdir(join(content, 'artists'));
+  await writeFile(join(content, 'artists/artist.json'), '{"name":"test"}');
+  build(outDir, content);
+  assert.match(await readFile(join(outDir, 'index.html'), 'utf8'), /<li>test<\/li>/);
+
+  await rm(join(content, 'artists/artist.json'));
+  build(outDir, content);
+  assert.match(await readFile(join(outDir, 'index.html'), 'utf8'), /No artists yet\./);
+});
+
+test('build uses the sample content when CONTENT_DIR is not set', async t => {
+  const outDir = await temporaryDirectory(t);
+  build(outDir);
+  assert.match(await readFile(join(outDir, 'index.html'), 'utf8'), /<li>Ana Pérez<\/li>/);
 });
