@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Resolve the branch again so re-running an old run builds its latest commit.
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: refs/heads/${{ github.ref_name }}
       - name: Check content checkout path
@@ -39,16 +39,18 @@ jobs:
             exit 1
           fi
       - name: Check out content
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: refs/heads/content
           path: .deployment-content
           persist-credentials: false
-      - uses: actions/setup-node@v6
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
-          node-version: '24'
-          cache: npm
-      - run: npm ci
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
       - name: Resolve deployment
         id: target
         env:
@@ -64,7 +66,7 @@ jobs:
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           echo "content_sha=$content_sha" >> "$GITHUB_OUTPUT"
           echo "content_dir=$content_dir" >> "$GITHUB_OUTPUT"
-      - run: npm run build
+      - run: pnpm run build
         env:
           GITHUB_SHA: ${{ steps.target.outputs.sha }}
           CONTENT_DIR: ${{ steps.target.outputs.content_dir }}
