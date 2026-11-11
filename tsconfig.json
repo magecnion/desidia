@@ -1,7 +1,9 @@
 {
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "types": ["node"]
+    "types": ["node"],
+    // Tests run TypeScript directly with Node's type stripping, which only removes type syntax.
+    "erasableSyntaxOnly": true
   },
   "include": [".astro/types.d.ts", "**/*"],
   "exclude": ["dist"]
