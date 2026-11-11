@@ -1,0 +1,28 @@
+---
+import { artistService } from '../services.ts';
+
+const commitSha = __COMMIT_SHA__;
+const artists = await artistService.listArtists();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Desidia deployment</title>
+    <style is:global>
+      body { max-width: 48rem; margin: 15vh auto; padding: 1.5rem; font-family: system-ui, sans-serif; line-height: 1.6; }
+      code { overflow-wrap: anywhere; }
+    </style>
+  </head>
+  <body>
+    <h1>Desidia is deployed</h1>
+    <p>Served by Cloudflare Workers Static Assets.</p>
+    <p>Commit: <code>{commitSha}</code></p>
+    <h2>Artists</h2>
+    {artists.length > 0
+      ? <ul>{artists.map(artist => <li>{artist.name}</li>)}</ul>
+      : <p>No artists yet.</p>}
+  </body>
+</html>
