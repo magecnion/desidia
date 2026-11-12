@@ -2,3 +2,5 @@ node_modules/
 dist/
 .wrangler/
 .worktrees/
+.astro/
+public/content/media/

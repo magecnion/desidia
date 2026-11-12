@@ -1,3 +1,10 @@
+---
+import { listArtists } from '../artist/service';
+import { commitSha } from '../../scripts/commit.mjs';
+
+const artists = await listArtists();
+const sha = commitSha();
+---
 <!doctype html>
 <html lang="en">
   <head>
@@ -12,8 +19,8 @@
   <body>
     <h1>Desidia is deployed</h1>
     <p>Served by Cloudflare Workers Static Assets.</p>
-    <p>Commit: <code>{{COMMIT_SHA}}</code></p>
+    <p>Commit: <code>{sha}</code></p>
     <h2>Artists</h2>
-    {{ARTISTS}}
+    {artists.length ? <ul>{artists.map(artist => <li>{artist.name}</li>)}</ul> : <p>No artists yet.</p>}
   </body>
 </html>
