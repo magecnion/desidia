@@ -8,12 +8,20 @@
   },
   "packageManager": "pnpm@12.18.0",
   "scripts": {
-    "build": "node scripts/build.mjs",
-    "dev": "pnpm run build && wrangler dev",
-    "preview": "pnpm run dev",
+    "build": "astro check && astro build",
+    "dev": "astro dev",
+    "preview": "pnpm run build && wrangler dev",
     "test": "node --test"
   },
+  "dependencies": {
+    "zod": "4.6.7"
+  },
   "devDependencies": {
+    "@astrojs/check": "0.9.12",
+    "@types/node": "26.6.6",
+    "astro": "7.4.11",
+    "parse5": "8.1.1",
+    "typescript": "6.0.3",
     "wrangler": "4.160.0"
   }
 }

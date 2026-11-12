@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { cleanup } from './cleanup.mjs';
-import { workerName } from './worker-name.mjs';
+import { cleanup } from '../scripts/cleanup.mjs';
+import { workerName } from '../scripts/worker-name.mjs';
 
 const options = { branch: 'feature/test', token: 'test-token', account: 'test-account' };
 

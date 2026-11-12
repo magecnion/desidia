@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { workerName } from './worker-name.mjs';
+import { workerName } from '../scripts/worker-name.mjs';
 
 test('production is explicit and cannot be a cleanup target', () => {
   assert.equal(workerName('main'), 'desidia');
